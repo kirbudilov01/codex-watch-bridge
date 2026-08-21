@@ -1,0 +1,7 @@
+.build/
+node_modules/
+.env
+WatchApp/Config.xcconfig
+.DS_Store
+*.xcuserstate
+xcuserdata/

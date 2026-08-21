@@ -1,0 +1,35 @@
+{
+  "name": "codex-watch-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "watchOS remote interface and bridge backend for Codex",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kirbudilov01/codex-watch-bridge.git"
+  },
+  "keywords": [
+    "codex",
+    "watchos",
+    "apple-watch",
+    "swiftui",
+    "bridge"
+  ],
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node scripts/start-bridge.js",
+    "doctor": "node scripts/doctor.js",
+    "check": "node scripts/check.js",
+    "service:install": "node scripts/install-launchd.js",
+    "service:uninstall": "node scripts/uninstall-launchd.js",
+    "service:status": "node scripts/service-status.js",
+    "tunnel:install": "node scripts/install-tunnel.js",
+    "tunnel:uninstall": "node scripts/uninstall-tunnel.js",
+    "tunnel:status": "node scripts/tunnel-status.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

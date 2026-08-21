@@ -1,0 +1,30 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Backend tests
+        run: npm test
+      - name: Swift package build
+        run: swift build
+      - name: watchOS generic build
+        run: |
+          xcodebuild \
+            -project CodexAppleWatch.xcodeproj \
+            -scheme CodexWatchApp \
+            -destination 'generic/platform=watchOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
