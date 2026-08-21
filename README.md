@@ -1,11 +1,8 @@
 # Codex Watch Bridge
 
-[![Check](https://github.com/kirbudilov01/codex-watch-bridge/actions/workflows/check.yml/badge.svg)](https://github.com/kirbudilov01/codex-watch-bridge/actions/workflows/check.yml)
-[![Pages](https://github.com/kirbudilov01/codex-watch-bridge/actions/workflows/pages.yml/badge.svg)](https://github.com/kirbudilov01/codex-watch-bridge/actions/workflows/pages.yml)
-
 A watchOS remote interface for Codex: projects, chats, dictated prompts, new threads, live status, long responses, and account limits from Apple Watch.
 
-**Project page:** https://kirbudilov01.github.io/codex-watch-bridge/
+**Project page:** https://ubtflow.com/codex-watch-bridge-page/
 
 ![Codex Watch Bridge UI mockups](docs/watch-ui-mock.png)
 
