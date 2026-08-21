@@ -1,10 +1,26 @@
 # Codex Watch Bridge
 
-A watchOS remote interface for Codex: projects, chats, dictated prompts, new threads, live status, long responses, and account limits from Apple Watch.
+![License](https://img.shields.io/badge/license-MIT-green)
+![watchOS](https://img.shields.io/badge/watchOS-10.0%2B-0A84FF)
+![SwiftUI](https://img.shields.io/badge/SwiftUI-watch%20client-orange)
+![Node.js](https://img.shields.io/badge/Node.js-bridge-339933)
+![Status](https://img.shields.io/badge/status-working%20prototype-blue)
+
+Codex Watch Bridge turns Apple Watch into a compact remote control for Codex: projects, chats, dictated prompts, new threads, live task status, long responses, and account limit visibility from your wrist.
 
 **Project page:** https://ubtflow.com/codex-watch-bridge-page/
 
+**Repository:** https://github.com/kirbudilov01/codex-watch-bridge
+
 ![Codex Watch Bridge UI mockups](docs/watch-ui-mock.png)
+
+## Highlights
+
+- **Real Codex threads, not mocks.** The bridge talks to Codex Desktop app-server first, then falls back to CLI/session files where needed.
+- **Watch-first UX.** Native SwiftUI navigation, readable long messages, concise statuses, and standard watchOS dictation through `TextField`.
+- **Remote-ready.** Use it on LAN or through a Mac-originated SSH reverse tunnel behind HTTPS.
+- **Secret-safe by design.** The Apple Watch never receives OpenAI/Codex secrets; it only talks to your bridge.
+- **Operational checks included.** `npm run check` validates backend tests, Swift build, and bridge doctor checks.
 
 ## What It Does
 
@@ -16,6 +32,17 @@ A watchOS remote interface for Codex: projects, chats, dictated prompts, new thr
 - Shows account limit remaining percentage on the Home screen.
 - Keeps OpenAI and Codex secrets server-side.
 - Supports local LAN use and remote HTTPS access through a Mac-originated SSH reverse tunnel.
+
+## Screens
+
+The current watch flow is:
+
+```text
+Home -> Projects -> Project -> Chats -> Chat
+Home -> Active / Status
+Chats -> New Chat -> dictated title -> Chat
+Chat -> dictated prompt -> live status -> Codex response
+```
 
 ## Architecture
 
@@ -29,6 +56,14 @@ Apple Watch
 ```
 
 The watch app never stores OpenAI or Codex API keys. It talks only to the bridge backend. The backend keeps watch-created display metadata in `~/.codex-watch-bridge` and uses Codex Desktop app-server when available.
+
+## Requirements
+
+- macOS with Xcode for building the watchOS app.
+- Paired Apple Watch running watchOS 10.0 or later.
+- Node.js for the local bridge.
+- Codex Desktop running on the Mac for best thread/message support.
+- Optional SSH server plus Nginx/Caddy/Cloudflare Tunnel for access away from home Wi-Fi.
 
 ## Quickstart
 
@@ -109,6 +144,17 @@ xcodebuild \
   CODE_SIGNING_ALLOWED=NO \
   build
 ```
+
+## Repository Health
+
+This repo follows a small open-source hygiene set:
+
+- MIT license.
+- Contribution guide.
+- Security policy.
+- Issue and pull request templates.
+- Ignored local secrets and watch configuration.
+- Reproducible local checks through `npm run check`.
 
 ## Security and Operations
 
