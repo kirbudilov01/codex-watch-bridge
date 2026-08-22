@@ -3,27 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark light">
-  <meta name="description" content="A watchOS remote interface for Codex: projects, chats, dictation, status, and account limits from Apple Watch.">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Codex Watch Bridge is a watchOS remote interface for Codex: projects, chats, dictation, task status, and account limits from Apple Watch.">
+  <meta property="og:title" content="Codex Watch Bridge">
+  <meta property="og:description" content="Run Codex tasks from Apple Watch with a secure Mac bridge.">
+  <meta property="og:image" content="watch-ui-mock.png">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Codex Watch Bridge</title>
   <style>
     :root {
-      --bg: #08090b;
-      --panel: #111419;
-      --panel-2: #171b22;
-      --text: #f4f7fb;
-      --muted: #aab3c2;
-      --line: #2a303a;
-      --primary: #69d38e;
-      --blue: #70a7ff;
-      --orange: #ffb45b;
-      --red: #ff6b7a;
-      --shadow: 0 18px 60px rgba(0, 0, 0, .35);
-      --radius: 16px;
+      --bg: #080a0d;
+      --surface: #12161c;
+      --line: #2a313b;
+      --line-soft: rgba(255, 255, 255, .08);
+      --text: #f5f7fb;
+      --muted: #a9b2bf;
+      --faint: #737d8c;
+      --primary: #5ee58f;
+      --primary-2: #b8ffce;
+      --blue: #80adff;
+      --amber: #ffc46b;
+      --danger: #ff707f;
+      --shadow: 0 24px 72px rgba(0, 0, 0, .38);
+      --radius: 8px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -34,8 +41,12 @@
 
     a { color: inherit; }
 
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
     .shell {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1160px, calc(100% - 32px));
       margin: 0 auto;
     }
 
@@ -43,42 +54,44 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      border-bottom: 1px solid rgba(255, 255, 255, .08);
-      background: rgba(8, 9, 11, .86);
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(8, 10, 13, .88);
       backdrop-filter: blur(18px);
     }
 
     nav {
-      height: 68px;
+      min-height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 18px;
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
-      font-weight: 760;
+      font-weight: 780;
+      white-space: nowrap;
+      text-decoration: none;
     }
 
-    .mark {
+    .brand-mark {
       width: 34px;
       height: 34px;
-      border-radius: 9px;
       display: grid;
       place-items: center;
-      background: #10141a;
       border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
       color: var(--primary);
       font-weight: 900;
     }
 
     .navlinks {
       display: flex;
-      gap: 18px;
       align-items: center;
+      gap: 18px;
       color: var(--muted);
       font-size: 14px;
     }
@@ -87,57 +100,79 @@
       text-decoration: none;
     }
 
+    .navlinks a:hover {
+      color: var(--text);
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 42px;
       padding: 0 16px;
-      border-radius: 10px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, .1);
       background: var(--primary);
-      color: #07110b;
-      font-weight: 760;
+      color: #06100a;
+      font-weight: 780;
       text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .button:hover {
+      filter: brightness(1.05);
     }
 
     .button.secondary {
-      background: var(--panel);
+      background: var(--surface);
       color: var(--text);
       border-color: var(--line);
     }
 
     .hero {
-      min-height: 720px;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
       align-items: center;
-      gap: 48px;
-      padding: 76px 0 40px;
+      gap: 52px;
+      padding: 92px 0 48px;
     }
 
     .eyebrow {
-      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      padding: 0 10px;
+      margin-bottom: 22px;
+      border: 1px solid rgba(94, 229, 143, .26);
+      border-radius: var(--radius);
+      background: rgba(94, 229, 143, .08);
+      color: var(--primary-2);
       font-size: 13px;
       font-weight: 760;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 0 0 4px rgba(94, 229, 143, .12);
     }
 
     h1 {
-      font-size: clamp(42px, 7vw, 76px);
-      line-height: .96;
-      letter-spacing: 0;
+      max-width: 760px;
       margin: 0 0 24px;
-      max-width: 780px;
+      font-size: 72px;
+      line-height: .98;
+      letter-spacing: 0;
     }
 
     .lead {
-      color: var(--muted);
-      font-size: clamp(18px, 2.3vw, 22px);
-      max-width: 680px;
+      max-width: 650px;
       margin: 0 0 30px;
+      color: var(--muted);
+      font-size: 21px;
     }
 
     .actions {
@@ -147,84 +182,141 @@
       margin-bottom: 30px;
     }
 
-    .metrics {
+    .proof-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      max-width: 580px;
+      max-width: 650px;
     }
 
-    .metric {
+    .proof {
+      min-height: 94px;
+      padding: 14px;
       border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: var(--radius);
+      background: var(--surface);
     }
 
-    .metric strong {
+    .proof strong {
       display: block;
-      font-size: 20px;
+      margin-bottom: 4px;
+      font-size: 24px;
+      line-height: 1.1;
     }
 
-    .metric span {
+    .proof span {
       color: var(--muted);
       font-size: 12px;
     }
 
-    .device-stage {
-      position: relative;
-      padding: 16px;
-      border-radius: 28px;
-      background: #0e1116;
+    .mock-panel {
+      padding: 12px;
       border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
       box-shadow: var(--shadow);
     }
+
+    .mock-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 38px;
+      padding: 0 4px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--danger);
+    }
+
+    .dot:nth-child(2) { background: var(--amber); }
+    .dot:nth-child(3) { background: var(--primary); }
 
     .mock-image {
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, .08);
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: #050608;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--line);
+    }
+
+    .status-item {
+      padding: 18px;
+      background: var(--surface);
+    }
+
+    .status-item span {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--faint);
+      font-size: 12px;
+      font-weight: 740;
+      text-transform: uppercase;
+    }
+
+    .status-item strong {
+      font-size: 17px;
     }
 
     section {
-      padding: 74px 0;
-      border-top: 1px solid rgba(255, 255, 255, .08);
+      padding: 78px 0;
+      border-top: 1px solid var(--line-soft);
     }
 
     .section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(320px, .6fr);
+      gap: 30px;
       align-items: end;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
     h2 {
-      font-size: clamp(30px, 4vw, 48px);
-      line-height: 1.05;
       margin: 0;
+      font-size: 44px;
+      line-height: 1.08;
       letter-spacing: 0;
     }
 
     .section-copy {
-      color: var(--muted);
-      max-width: 520px;
       margin: 0;
+      color: var(--muted);
+      font-size: 17px;
     }
 
-    .grid {
+    .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
 
     .card {
-      background: var(--panel);
+      padding: 20px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 20px;
+      background: var(--surface);
     }
 
     .card h3 {
@@ -243,11 +335,11 @@
       min-height: 26px;
       padding: 0 9px;
       margin-bottom: 14px;
-      border-radius: 8px;
-      background: rgba(105, 211, 142, .12);
-      color: var(--primary);
+      border-radius: var(--radius);
+      background: rgba(128, 173, 255, .11);
+      color: var(--blue);
       font-size: 12px;
-      font-weight: 760;
+      font-weight: 780;
     }
 
     .flow {
@@ -257,35 +349,71 @@
     }
 
     .step {
-      min-height: 112px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 14px;
+      min-height: 126px;
       padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
     }
 
     .step span {
       display: block;
-      color: var(--blue);
+      margin-bottom: 10px;
+      color: var(--primary);
       font-size: 12px;
-      font-weight: 760;
-      margin-bottom: 8px;
+      font-weight: 820;
     }
 
     .step strong {
       display: block;
+      margin-bottom: 6px;
       line-height: 1.2;
     }
 
-    .terminal {
-      background: #07080a;
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: minmax(0, .7fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stack-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px;
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .stack-row span {
+      color: var(--muted);
+    }
+
+    .terminal {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
       overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #050608;
     }
 
     .terminal-bar {
-      height: 38px;
+      min-height: 38px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -295,87 +423,116 @@
       font-size: 13px;
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .dot:nth-child(2) { background: var(--orange); }
-    .dot:nth-child(3) { background: var(--primary); }
-
     pre {
       margin: 0;
       padding: 20px;
       overflow-x: auto;
-      color: #d6f6df;
+      color: #d9ffe4;
       font-size: 14px;
-      line-height: 1.65;
+      line-height: 1.72;
     }
 
     .split {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-      gap: 18px;
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 420px);
+      gap: 16px;
+      align-items: stretch;
     }
 
-    .status-list {
+    .checklist {
       display: grid;
       gap: 10px;
     }
 
-    .status-row {
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .check::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .repo-cta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 13px 14px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--panel);
+      gap: 20px;
+      padding: 26px;
+      border: 1px solid rgba(94, 229, 143, .24);
+      border-radius: var(--radius);
+      background: #101812;
     }
 
-    .pill {
-      color: #061108;
-      background: var(--primary);
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-size: 12px;
-      font-weight: 760;
+    .repo-cta h2 {
+      font-size: 32px;
+    }
+
+    .repo-cta p {
+      margin: 8px 0 0;
+      color: var(--muted);
     }
 
     footer {
       padding: 34px 0 54px;
+      border-top: 1px solid var(--line-soft);
       color: var(--muted);
-      border-top: 1px solid rgba(255, 255, 255, .08);
+      font-size: 14px;
     }
 
-    @media (max-width: 900px) {
-      .hero, .split {
+    @media (max-width: 980px) {
+      .hero,
+      .section-head,
+      .architecture,
+      .split {
         grid-template-columns: 1fr;
       }
 
-      .hero {
-        min-height: auto;
-        padding-top: 46px;
-      }
+      h1 { font-size: 54px; }
+      h2 { font-size: 36px; }
 
-      .grid, .flow, .metrics {
+      .grid-3,
+      .flow,
+      .proof-row,
+      .status-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 22px, 1160px); }
+      nav { min-height: 58px; }
+      .brand { font-size: 14px; }
+      .navlinks a:not(.button) { display: none; }
+      .hero { gap: 30px; padding: 48px 0 34px; }
+      h1 { font-size: 42px; }
+      .lead { font-size: 18px; }
+      section { padding: 56px 0; }
+
+      .grid-3,
+      .flow,
+      .proof-row,
+      .status-strip {
         grid-template-columns: 1fr;
       }
 
-      .section-head {
+      .repo-cta {
         display: block;
       }
 
-      .section-copy {
-        margin-top: 12px;
-      }
-
-      .navlinks a:not(.button) {
-        display: none;
+      .repo-cta .button {
+        margin-top: 18px;
+        width: 100%;
       }
     }
   </style>
@@ -383,9 +540,12 @@
 <body>
   <header>
     <nav class="shell">
-      <div class="brand"><span class="mark">⌁</span> Codex Watch Bridge</div>
+      <a class="brand" href="#" aria-label="Codex Watch Bridge home">
+        <span class="brand-mark">⌁</span>
+        <span>Codex Watch Bridge</span>
+      </a>
       <div class="navlinks">
-        <a href="#ux">UX</a>
+        <a href="#watch">Watch UX</a>
         <a href="#bridge">Bridge</a>
         <a href="#setup">Setup</a>
         <a class="button secondary" href="https://github.com/kirbudilov01/codex-watch-bridge">GitHub</a>
@@ -396,36 +556,48 @@
   <main>
     <section class="hero shell">
       <div>
-        <div class="eyebrow">watchOS remote control for Codex</div>
-        <h1>Run Codex tasks from your wrist.</h1>
-        <p class="lead">Browse projects, open existing chats, dictate prompts, create new Codex threads, watch live status, and read long technical responses on Apple Watch.</p>
+        <div class="eyebrow">Live Codex control from Apple Watch</div>
+        <h1>Run Codex tasks without opening your Mac.</h1>
+        <p class="lead">Open projects, inspect existing chats, dictate prompts, create new threads, track working status, and read Codex responses from a watchOS interface built for quick decisions.</p>
         <div class="actions">
-          <a class="button" href="#setup">Install bridge</a>
+          <a class="button" href="https://github.com/kirbudilov01/codex-watch-bridge">View repository</a>
           <a class="button secondary" href="watch-ui-mock.html">Open UI mock</a>
         </div>
-        <div class="metrics">
-          <div class="metric"><strong>150</strong><span>recent projects optimized for watchOS</span></div>
-          <div class="metric"><strong>HTTPS</strong><span>remote access through a token-protected tunnel</span></div>
-          <div class="metric"><strong>Native</strong><span>Codex Desktop app-server first, CLI fallback second</span></div>
+        <div class="proof-row" aria-label="Project highlights">
+          <div class="proof"><strong>Real</strong><span>Codex Desktop threads, messages, and app-server integration</span></div>
+          <div class="proof"><strong>Remote</strong><span>HTTPS bridge through a Mac-originated tunnel</span></div>
+          <div class="proof"><strong>Native</strong><span>watchOS SwiftUI controls and standard dictation</span></div>
         </div>
       </div>
-      <div class="device-stage">
-        <img class="mock-image" src="watch-ui-mock.png" alt="Four Apple Watch UI mockups showing projects, chats, new chat, and chat status.">
+
+      <div class="mock-panel" aria-label="Apple Watch UI preview">
+        <div class="mock-toolbar">
+          <div class="window-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <span>Projects · Chats · Status · Dictation</span>
+        </div>
+        <img class="mock-image" src="watch-ui-mock.png" alt="Codex Watch Bridge watchOS interface mockups showing projects, chats, new chat, and a running chat.">
       </div>
     </section>
 
-    <section id="ux">
+    <div class="shell status-strip">
+      <div class="status-item"><span>Account</span><strong>Limit left %</strong></div>
+      <div class="status-item"><span>Task state</span><strong>Working / Failed / Done</strong></div>
+      <div class="status-item"><span>Input</span><strong>Dictation-ready</strong></div>
+      <div class="status-item"><span>Secrets</span><strong>Server-side only</strong></div>
+    </div>
+
+    <section id="watch">
       <div class="shell">
         <div class="section-head">
-          <h2>Designed for the watch, not squeezed from desktop.</h2>
-          <p class="section-copy">The interface keeps the core Codex loop visible: choose project, choose chat, dictate, send, wait, read. Everything else stays out of the way.</p>
+          <h2>A wrist-sized flow for real Codex work.</h2>
+          <p class="section-copy">The watch app focuses on the loop that matters in the field: find the right project, continue the right thread, send the next instruction, and know whether Codex is still working.</p>
         </div>
         <div class="flow">
-          <div class="step"><span>01</span><strong>Home</strong><p>Account limits and entry points.</p></div>
-          <div class="step"><span>02</span><strong>Projects</strong><p>Recent workspaces and active counts.</p></div>
-          <div class="step"><span>03</span><strong>Chats</strong><p>Existing threads plus New Chat.</p></div>
-          <div class="step"><span>04</span><strong>Dictation</strong><p>Native watchOS text input.</p></div>
-          <div class="step"><span>05</span><strong>Status</strong><p>Queued, Working, Completed, Failed.</p></div>
+          <div class="step"><span>01</span><strong>Home</strong><p>Limits, active status, and quick entry to projects.</p></div>
+          <div class="step"><span>02</span><strong>Projects</strong><p>Recent Codex workspaces without scanning the whole session archive.</p></div>
+          <div class="step"><span>03</span><strong>Threads</strong><p>Existing chats, previews, timestamps, and New Chat.</p></div>
+          <div class="step"><span>04</span><strong>Prompt</strong><p>Native text input so watchOS dictation and keyboard behavior stay standard.</p></div>
+          <div class="step"><span>05</span><strong>Response</strong><p>Live status updates and scrollable long technical replies.</p></div>
         </div>
       </div>
     </section>
@@ -433,33 +605,42 @@
     <section id="bridge">
       <div class="shell">
         <div class="section-head">
-          <h2>A small bridge with production habits.</h2>
-          <p class="section-copy">The watch never stores API keys. It talks to a local Mac bridge, which talks to Codex Desktop and local session history.</p>
+          <h2>The bridge keeps the watch simple.</h2>
+          <p class="section-copy">Apple Watch talks to one compact API. The Mac bridge handles Codex Desktop, local history, auth, tunnel reliability, and normalized watch-friendly models.</p>
         </div>
-        <div class="grid">
-          <div class="card">
-            <span class="tag">Security</span>
-            <h3>Token-protected API</h3>
-            <p>Bearer auth, no OpenAI secrets on watchOS, no-store responses, safe local config template.</p>
+        <div class="architecture">
+          <div class="stack" aria-label="Bridge architecture">
+            <div class="stack-row"><strong>Apple Watch</strong><span>SwiftUI client</span></div>
+            <div class="stack-row"><strong>HTTPS API</strong><span>Bearer token</span></div>
+            <div class="stack-row"><strong>Mac Bridge</strong><span>launchd service</span></div>
+            <div class="stack-row"><strong>Codex Desktop</strong><span>app-server first</span></div>
+            <div class="stack-row"><strong>Fallbacks</strong><span>CLI + JSONL</span></div>
           </div>
-          <div class="card">
-            <span class="tag">Reliability</span>
-            <h3>launchd + tunnel</h3>
-            <p>Bridge and SSH reverse tunnel are managed as user launch agents so Terminal can close.</p>
-          </div>
-          <div class="card">
-            <span class="tag">Speed</span>
-            <h3>Fast project index</h3>
-            <p>Uses Codex Desktop thread index first, with cache and a watch-friendly recent project cap.</p>
+          <div class="grid-3">
+            <div class="card">
+              <span class="tag">Security</span>
+              <h3>No keys on watchOS</h3>
+              <p>Secrets remain on the Mac/server side. The watch receives normalized data only.</p>
+            </div>
+            <div class="card">
+              <span class="tag">Reliability</span>
+              <h3>Survives Terminal closing</h3>
+              <p>Bridge and tunnel run as launch agents instead of fragile foreground commands.</p>
+            </div>
+            <div class="card">
+              <span class="tag">Performance</span>
+              <h3>Fast project loading</h3>
+              <p>Uses app-server thread indexes and bounded recent-project views for watch UX.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section>
+    <section id="setup">
       <div class="shell split">
         <div class="terminal">
-          <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>bridge quickstart</span></div>
+          <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span>quickstart</span></div>
           <pre><code>npm run check
 npm run service:install
 npm run tunnel:install
@@ -469,33 +650,30 @@ npm run tunnel:install
 # Set Team + Bundle ID
 # Run CodexWatchApp on Apple Watch</code></pre>
         </div>
-        <div class="status-list">
-          <div class="status-row"><span>Projects</span><span class="pill">Fast</span></div>
-          <div class="status-row"><span>New chat</span><span class="pill">Native</span></div>
-          <div class="status-row"><span>Prompt send</span><span class="pill">Dictation</span></div>
-          <div class="status-row"><span>Long responses</span><span class="pill">Scrollable</span></div>
-          <div class="status-row"><span>Account limit</span><span class="pill">Left %</span></div>
+        <div class="checklist" aria-label="Included features">
+          <div class="check">Projects and existing Codex chats</div>
+          <div class="check">New chat creation from Apple Watch</div>
+          <div class="check">Prompt sending into the current thread</div>
+          <div class="check">Normalized task states and retryable errors</div>
+          <div class="check">Account limit remaining percentage</div>
+          <div class="check">README, security notes, operations guide, templates</div>
         </div>
       </div>
     </section>
 
-    <section id="setup">
-      <div class="shell">
-        <div class="section-head">
-          <h2>Open-source repo, practical defaults.</h2>
-          <p class="section-copy">MIT licensed, CI checked, documented security boundaries, and a readable operations guide for bridge/tunnel issues.</p>
+    <section>
+      <div class="shell repo-cta">
+        <div>
+          <h2>Open-source and operator-ready.</h2>
+          <p>MIT licensed, documented, and built around practical remote Codex operation rather than a fake demo chat.</p>
         </div>
-        <div class="grid">
-          <div class="card"><h3>Backend</h3><p>Node HTTP bridge, Codex app-server client, CLI fallback, JSONL fallback, tests.</p></div>
-          <div class="card"><h3>Watch App</h3><p>SwiftUI screens for Home, Projects, Threads, Create Chat, Chat, Status and native dictation.</p></div>
-          <div class="card"><h3>Docs</h3><p>README, SECURITY, CONTRIBUTING, operations notes, mockups, and GitHub Pages.</p></div>
-        </div>
+        <a class="button" href="https://github.com/kirbudilov01/codex-watch-bridge">Open on GitHub</a>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="shell">Built for Codex operators who want the status of real work without opening a laptop.</div>
+    <div class="shell">Codex Watch Bridge · Apple Watch remote interface for real Codex sessions.</div>
   </footer>
 </body>
 </html>
