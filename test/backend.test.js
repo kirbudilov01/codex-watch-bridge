@@ -187,6 +187,39 @@ test("HTTP API returns account rate limits", async () => {
   }
 });
 
+test("HTTP API can require or skip bearer authentication", async () => {
+  const { codexHome, storage } = await fixture();
+  const previousToken = process.env.CODEX_WATCH_BRIDGE_TOKEN;
+  const previousMode = process.env.CODEX_WATCH_AUTH_MODE;
+  process.env.CODEX_WATCH_BRIDGE_TOKEN = "test-token";
+  process.env.CODEX_WATCH_AUTH_MODE = "required";
+
+  const store = new CodexStore({ codexHome, storage, appServer: unavailableAppServer });
+  const server = createServer({ store, runner: { sendMessage: async () => null } });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${server.address().port}`;
+
+  try {
+    const blocked = await fetch(`${base}/health`);
+    assert.equal(blocked.status, 401);
+
+    const allowed = await fetch(`${base}/health`, {
+      headers: { authorization: "Bearer test-token" }
+    });
+    assert.equal(allowed.status, 200);
+
+    process.env.CODEX_WATCH_AUTH_MODE = "optional";
+    const skipped = await fetch(`${base}/health`);
+    assert.equal(skipped.status, 200);
+  } finally {
+    if (previousToken === undefined) delete process.env.CODEX_WATCH_BRIDGE_TOKEN;
+    else process.env.CODEX_WATCH_BRIDGE_TOKEN = previousToken;
+    if (previousMode === undefined) delete process.env.CODEX_WATCH_AUTH_MODE;
+    else process.env.CODEX_WATCH_AUTH_MODE = previousMode;
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
 test("runner sends existing Codex thread through app-server when available", async () => {
   const { codexHome, storage, id, workdir } = await fixture();
   const turns = [];

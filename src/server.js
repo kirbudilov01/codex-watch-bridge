@@ -70,7 +70,9 @@ export function createServer({ store = new CodexStore(), runner = null } = {}) {
 
 function authorized(req) {
   const token = process.env.CODEX_WATCH_BRIDGE_TOKEN;
-  if (!token) return true;
+  const authMode = String(process.env.CODEX_WATCH_AUTH_MODE || "").toLowerCase();
+  if (authMode === "optional") return true;
+  if (!token) return authMode !== "required";
   const expected = `Bearer ${token}`;
   const actual = String(req.headers.authorization || "");
   return safeEqual(actual, expected);

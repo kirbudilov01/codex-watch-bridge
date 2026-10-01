@@ -121,6 +121,18 @@ http://127.0.0.1:8765
 
 For a physical Apple Watch, use either the LAN URL printed by `npm run dev` or a public HTTPS reverse proxy URL in `WatchApp/Config.xcconfig`.
 
+Authentication can be skipped for a local demo:
+
+```sh
+CODEX_WATCH_AUTH_MODE=optional npm run dev
+```
+
+For a public or shared reverse proxy, require a bearer token:
+
+```sh
+CODEX_WATCH_AUTH_MODE=required CODEX_WATCH_BRIDGE_TOKEN="$(openssl rand -hex 32)" npm run dev
+```
+
 Use `WatchApp/Config.example.xcconfig` as the safe template:
 
 ```xcconfig
@@ -192,7 +204,8 @@ xcodebuild \
 - Do not put OpenAI keys, Codex secrets, cookies, or session files in the watch app.
 - Do not commit `WatchApp/Config.xcconfig`; it can contain a bridge bearer token.
 - Use HTTPS for remote access.
-- Prefer a random bearer token for the bridge.
+- Prefer `CODEX_WATCH_AUTH_MODE=required` with a random bearer token for a public bridge.
+- Use `CODEX_WATCH_AUTH_MODE=optional` only for local demos or trusted private networks.
 - Keep the Mac bridge behind a reverse proxy path, not a broad public port.
 
 See `SECURITY.md` for the full policy.

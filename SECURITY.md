@@ -9,6 +9,8 @@ This repository is a private local bridge and watchOS client. It is not a public
 - Do not commit `WatchApp/Config.xcconfig`.
 - Do not put OpenAI, Codex, SSH, Apple, or server credentials in the watch app.
 - Use `CODEX_WATCH_BRIDGE_TOKEN` on the bridge and `CODEX_BRIDGE_TOKEN` in the watch build settings.
+- Use `CODEX_WATCH_AUTH_MODE=optional` only for local demos or trusted private networks where visitors need to skip token setup.
+- Use `CODEX_WATCH_AUTH_MODE=required` for public reverse proxies and shared demos.
 - Keep bridge runtime state under `~/.codex-watch-bridge`.
 
 ## Network Exposure
@@ -32,3 +34,5 @@ Expected public behavior:
 - authenticated `/health`, `/projects`, and `/limits` return `200`;
 - unauthenticated requests return `401`;
 - `/projects` returns quickly, normally within a few seconds.
+
+For demo-only launches with `CODEX_WATCH_AUTH_MODE=optional`, unauthenticated API requests may return `200`. Do not use that mode on an internet-facing bridge unless the backing Mac and Codex state are intentionally public.
